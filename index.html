@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Image Upload</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<center><h1 class="header">Quick Image Upload</h1></center>
+
+	<div class="card card-box">
+	  <div class="card-body">
+	    <h5 class="card-title">Image upload</h5>
+	    <div class="container">
+		  <div class="row">
+		    <div class="col-sm">
+		      <input type="file" name="myFile" id="myFile" onchange="uploadImage();">
+		    </div>
+		    <div class="col-sm">
+		    	<small id="response"></small> 
+		      <div class="spinner-border text-primary" id="loader" role="status">
+				  <span class="sr-only">Loading...</span>
+			  </div>
+		    </div>
+		    <div class="col-sm">
+		      <img src="" id="showImage">
+		    </div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+
+</body>
+<script type="text/javascript" src="jquery-3.5.1.js"></script>
+<script type="text/javascript">
+
+	$('#loader').hide();
+	$('#response').hide();
+
+	function uploadImage() {
+		$('#loader').show();
+
+		var myFile = $('#myFile').prop('files')[0];
+
+		var formData = new FormData();
+		formData.append('inputFile', myFile);
+
+		$.ajax({
+			type: 'POST',
+			url: 'uploadApi.php',
+			data: formData,
+			cache:false,
+			contentType:false,
+			processData:false,
+			dataType:'text',
+			success:function(data){
+				$('#loader').hide();
+				$('#response').show();
+				console.log(data);
+
+				var myData = JSON.parse(data);
+
+				if (myData['status']) {
+					$('#response').text(myData['msg']);
+					$('#showImage').attr('src', myData['url']);
+				} else {
+					$('#response').text(myData['msg']);
+				} 
+			}
+		});
+
+	}
+</script>
+</html>
